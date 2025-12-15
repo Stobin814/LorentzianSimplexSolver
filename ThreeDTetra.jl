@@ -71,12 +71,29 @@ function get3dtet(tetedgevec::Vector{Vector{Float64}},
     ]
 
     # ------------------------------------------------------------
+    # DEBUG: also compute max abs per component
+    # ------------------------------------------------------------
+    max_components = [
+        maximum(abs(v[j]) for v in tet4d)
+        for j in 1:ncomp
+    ]
+
+    # ------------------------------------------------------------
     # Step 3: find zero component
     # ------------------------------------------------------------
     zero_positions = findall(x -> isapprox(x, 0.0, atol=1e-12),
                              sum_components)
 
     if length(zero_positions) != 1
+        println("--------------------------------------------------")
+        println("get3dtet DEBUG: could not identify unique zero component")
+        println("sum_components = ", sum_components)
+        println("max_components = ", max_components)
+        println("tet4d edge vectors:")
+        for (k,v) in enumerate(tet4d)
+            println("  edge $k = ", v)
+        end
+        println("--------------------------------------------------")
         error("Something is wrong — could not identify the unique 0-component. Check your data.")
     end
 
